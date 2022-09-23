@@ -26,14 +26,14 @@ Also see the ["Getting Help with MariaDB" article on the MariaDB Knowledge Base]
 
 # Supported tags and respective `Dockerfile` links
 
--	[`10.10.1-rc-jammy`, `10.10-rc-jammy`, `10.10.1-rc`, `10.10-rc`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.10/Dockerfile)
--	[`10.9.2-jammy`, `10.9-jammy`, `10-jammy`, `jammy`, `10.9.2`, `10.9`, `10`, `latest`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.9/Dockerfile)
--	[`10.8.4-jammy`, `10.8-jammy`, `10.8.4`, `10.8`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.8/Dockerfile)
--	[`10.7.5-focal`, `10.7-focal`, `10.7.5`, `10.7`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.7/Dockerfile)
--	[`10.6.9-focal`, `10.6-focal`, `10.6.9`, `10.6`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.6/Dockerfile)
--	[`10.5.17-focal`, `10.5-focal`, `10.5.17`, `10.5`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.5/Dockerfile)
--	[`10.4.26-focal`, `10.4-focal`, `10.4.26`, `10.4`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.4/Dockerfile)
--	[`10.3.36-focal`, `10.3-focal`, `10.3.36`, `10.3`](https://github.com/MariaDB/mariadb-docker/blob/97e6715fb9f86010de510eef718f7341e3011c25/10.3/Dockerfile)
+-	[`10.10.1-rc-jammy`, `10.10-rc-jammy`, `10.10.1-rc`, `10.10-rc`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.10/Dockerfile)
+-	[`10.9.3-jammy`, `10.9-jammy`, `10-jammy`, `jammy`, `10.9.3`, `10.9`, `10`, `latest`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.9/Dockerfile)
+-	[`10.8.5-jammy`, `10.8-jammy`, `10.8.5`, `10.8`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.8/Dockerfile)
+-	[`10.7.6-focal`, `10.7-focal`, `10.7.6`, `10.7`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.7/Dockerfile)
+-	[`10.6.10-focal`, `10.6-focal`, `10.6.10`, `10.6`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.6/Dockerfile)
+-	[`10.5.17-focal`, `10.5-focal`, `10.5.17`, `10.5`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.5/Dockerfile)
+-	[`10.4.26-focal`, `10.4-focal`, `10.4.26`, `10.4`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.4/Dockerfile)
+-	[`10.3.36-focal`, `10.3-focal`, `10.3.36`, `10.3`](https://github.com/MariaDB/mariadb-docker/blob/749c720c63306d1572849afc6ab1cfa02fd08338/10.3/Dockerfile)
 
 # Quick reference (cont.)
 
@@ -182,9 +182,11 @@ From tag 10.2.38, 10.3.29, 10.4.19, 10.5.10 onwards, and all 10.6 and later tags
 
 One of `MARIADB_ROOT_PASSWORD`, `MARIADB_ALLOW_EMPTY_ROOT_PASSWORD`, or `MARIADB_RANDOM_ROOT_PASSWORD` (or equivalents, including `*_FILE`), is required. The other environment variables are optional.
 
-### `MARIADB_ROOT_PASSWORD` / `MYSQL_ROOT_PASSWORD`
+### `MARIADB_ROOT_PASSWORD` / `MYSQL_ROOT_PASSWORD`, `MARIADB_ROOT_PASSWORD_HASH`
 
 This specifies the password that will be set for the MariaDB `root` superuser account. In the above example, it was set to `my-secret-pw`.
+
+In order to have no plaintext secret in the deployment, `MARIADB_ROOT_PASSWORD_HASH` can be used as it is just the hash of the password. The hash can be generated with `SELECT PASSWORD('bob')` as a SQL query.
 
 ### `MARIADB_ALLOW_EMPTY_ROOT_PASSWORD` / `MYSQL_ALLOW_EMPTY_PASSWORD`
 
@@ -208,7 +210,7 @@ The `mysql@localhost` user gets [USAGE](https://mariadb.com/kb/en/grant/#the-usa
 
 This variable allows you to specify the name of a database to be created on image startup.
 
-### `MARIADB_USER` / `MYSQL_USER`, `MARIADB_PASSWORD` / `MYSQL_PASSWORD`
+### `MARIADB_USER` / `MYSQL_USER`, `MARIADB_PASSWORD` / `MYSQL_PASSWORD`, `MARIADB_PASSWORD_HASH`
 
 These are used in conjunction to create a new user and to set that user's password. Both user and password variables are required for a user to be created. This user will be granted all access ([corresponding to `GRANT ALL`](https://mariadb.com/kb/en/grant/#the-all-privileges-privilege)) to the `MARIADB_DATABASE` database.
 
@@ -232,7 +234,7 @@ As an alternative to passing sensitive information via environment variables, `_
 $ docker run --name some-mysql -e MARIADB_ROOT_PASSWORD_FILE=/run/secrets/mysql-root -d mariadb:latest
 ```
 
-Currently, this is only supported for `MARIADB_ROOT_PASSWORD`, `MARIADB_ROOT_HOST`, `MARIADB_DATABASE`, `MARIADB_USER`, and `MARIADB_PASSWORD` (and `MYSQL_*` equivalents of these).
+Currently, this is only supported for `MARIADB_ROOT_PASSWORD`, `MARIADB_ROOT_PASSWORD_HASH`, `MARIADB_ROOT_HOST`, `MARIADB_DATABASE`, `MARIADB_USER`, `MARIADB_PASSWORD` and `MARIADB_PASSWORD_HASH` (and `MYSQL_*` equivalents of these).
 
 # Initializing a fresh instance
 
